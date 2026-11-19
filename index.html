@@ -98,6 +98,13 @@
     <path d="m12 3.5 8.5 4.4L12 12.3 3.5 7.9 12 3.5Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
     <path d="m3.5 12.2 8.5 4.4 8.5-4.4M3.5 16.4l8.5 4.4 8.5-4.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
   </symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24">
+    <path d="M4 5.8A2.8 2.8 0 0 1 6.8 3h10.4A2.8 2.8 0 0 1 20 5.8v7.4a2.8 2.8 0 0 1-2.8 2.8H11l-4.4 3.6V16h-.2A2.4 2.4 0 0 1 4 13.6V5.8Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+    <path d="M8.4 8.6h7.2M8.4 11.6h4.4" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+  </symbol>
+  <symbol id="i-send" viewBox="0 0 24 24">
+    <path d="M21 3 10.5 13.5M21 3l-6.8 18-3.7-7.5L3 9.8 21 3Z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </symbol>
   <symbol id="i-users" viewBox="0 0 24 24">
     <circle cx="9" cy="8.5" r="3.4" fill="none" stroke="currentColor" stroke-width="1.7"/>
     <path d="M2.8 19.5c.4-3.3 3-5.2 6.2-5.2s5.8 1.9 6.2 5.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
@@ -566,6 +573,39 @@
 <button class="to-top" id="toTop" type="button" aria-label="Retour en haut de page">
   <svg><use href="#i-up"/></svg>
 </button>
+
+<!-- ===================== ASSISTANT (CHATBOT) ===================== -->
+<div class="chat" id="chat">
+  <button class="chat__fab" id="chatFab" type="button" aria-label="Ouvrir l'assistant" aria-expanded="false" aria-controls="chatPanel">
+    <svg class="chat__fab-open" aria-hidden="true"><use href="#i-chat"/></svg>
+    <svg class="chat__fab-close" aria-hidden="true"><use href="#i-close"/></svg>
+  </button>
+
+  <section class="chat__panel" id="chatPanel" role="dialog" aria-label="Assistant INSFP Rahmania" hidden>
+    <header class="chat__head">
+      <span class="chat__avatar" aria-hidden="true"><svg><use href="#i-cap"/></svg></span>
+      <div class="chat__title">
+        <strong>Assistant INSFP</strong>
+        <span><i class="pulse"></i> En ligne · répond avec le contenu du site</span>
+      </div>
+      <button class="chat__x" id="chatClose" type="button" aria-label="Fermer l'assistant">
+        <svg aria-hidden="true"><use href="#i-close"/></svg>
+      </button>
+    </header>
+
+    <div class="chat__log" id="chatLog" aria-live="polite"></div>
+
+    <div class="chat__chips" id="chatChips" aria-label="Questions suggérées"></div>
+
+    <form class="chat__form" id="chatForm" autocomplete="off">
+      <input class="chat__input" id="chatInput" type="text" maxlength="200"
+             placeholder="Posez votre question…" aria-label="Votre question">
+      <button class="chat__send" type="submit" aria-label="Envoyer">
+        <svg aria-hidden="true"><use href="#i-send"/></svg>
+      </button>
+    </form>
+  </section>
+</div>
 
 <script src="script.js"></script>
 </body>
