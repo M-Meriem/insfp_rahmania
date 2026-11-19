@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,7 +10,7 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Sora:wght@400;600;700;800&family=Cairo:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -116,24 +116,30 @@
 <!-- ===================== HEADER ===================== -->
 <header class="site-header" id="header">
   <div class="container header__inner">
-    <a href="#accueil" class="brand" aria-label="INSFP Rahmania — accueil">
+    <a href="#accueil" class="brand" aria-label="INSFP Rahmania — accueil" data-i18n-attr="aria-label:brand.aria">
       <span class="brand__mark"><svg><use href="#i-cap"/></svg></span>
       <span class="brand__text">
         <strong>INSFP Rahmania</strong>
-        <small>Métiers du numérique</small>
+        <small data-i18n="brand.sub">Métiers du numérique</small>
       </span>
     </a>
 
-    <nav class="nav" id="nav" aria-label="Navigation principale">
-      <a href="#accueil" class="is-active">Accueil</a>
-      <a href="#institut">L'institut</a>
-      <a href="#formations">Formations</a>
-      <a href="#statistiques">Statistiques</a>
-      <a href="#directrice">La directrice</a>
-      <a href="#contact">Contact</a>
+    <nav class="nav" id="nav" aria-label="Navigation principale" data-i18n-attr="aria-label:nav.aria">
+      <a href="#accueil" class="is-active" data-i18n="nav.home">Accueil</a>
+      <a href="#institut" data-i18n="nav.institute">L'institut</a>
+      <a href="#formations" data-i18n="nav.programs">Formations</a>
+      <a href="#statistiques" data-i18n="nav.stats">Statistiques</a>
+      <a href="#directrice" data-i18n="nav.director">La directrice</a>
+      <a href="#contact" data-i18n="nav.contact">Contact</a>
     </nav>
 
-    <a href="#contact" class="btn btn--primary header__cta">Nous joindre</a>
+    <div class="lang-switch" role="group" aria-label="Langue" data-i18n-attr="aria-label:lang.aria">
+      <button type="button" data-lang="fr" lang="fr" aria-pressed="true">FR</button>
+      <button type="button" data-lang="en" lang="en" aria-pressed="false">EN</button>
+      <button type="button" data-lang="ar" lang="ar" aria-pressed="false">عربي</button>
+    </div>
+
+    <a href="#contact" class="btn btn--primary header__cta" data-i18n="nav.cta">Nous joindre</a>
 
     <button class="burger" id="burger" aria-label="Ouvrir le menu" aria-expanded="false" aria-controls="nav">
       <span></span><span></span><span></span>
@@ -146,11 +152,11 @@
   <section class="hero" id="accueil">
     <div class="container hero__inner">
       <div class="hero__content">
-        <span class="hero__eyebrow"><span class="pulse"></span> Établissement public · Pôle de Sidi Abdellah</span>
+        <span class="hero__eyebrow"><span class="pulse"></span> <span data-i18n="hero.eyebrow">Établissement public · Pôle de Sidi Abdellah</span></span>
 
-        <h1>INSFP Rahmania, <em>l'école des métiers du numérique</em></h1>
+        <h1 data-i18n="hero.title">INSFP Rahmania, <em>l'école des métiers du numérique</em></h1>
 
-        <p class="hero__lead">
+        <p class="hero__lead" data-i18n="hero.lead">
           Institut National Spécialisé de la Formation Professionnelle, nous formons
           les techniciens dont l'Algérie a besoin dans les filières du numérique :
           data science, métaverse, fibre optique, maintenance IT, intelligence
@@ -159,39 +165,39 @@
 
         <div class="hero__actions">
           <a href="#formations" class="btn btn--primary">
-            Découvrir les 7 filières <svg><use href="#i-arrow"/></svg>
+            <span data-i18n="hero.cta1">Découvrir les 7 filières</span> <svg><use href="#i-arrow"/></svg>
           </a>
-          <a href="#contact" class="btn btn--ghost">Contacter l'institut</a>
+          <a href="#contact" class="btn btn--ghost" data-i18n="hero.cta2">Contacter l'institut</a>
         </div>
 
         <ul class="hero__stats">
-          <li><strong data-count="7">0</strong><span>Filières numériques</span></li>
-          <li><strong data-count="30">0</strong><span>Mois de cursus (max.)</span></li>
-          <li><strong data-count="100" data-suffix=" %">0</strong><span>Formation publique</span></li>
+          <li><strong data-count="7">0</strong><span data-i18n="hero.s1">Filières numériques</span></li>
+          <li><strong data-count="30">0</strong><span data-i18n="hero.s2">Mois de cursus (max.)</span></li>
+          <li><strong data-count="100" data-suffix=" %">0</strong><span data-i18n="hero.s3">Formation publique</span></li>
         </ul>
       </div>
 
       <aside class="hero__card">
         <div class="hero__card-head">
           <span class="pulse"></span>
-          <span>Fiche établissement</span>
+          <span data-i18n="card.head">Fiche établissement</span>
         </div>
 
         <ul class="hero__list">
-          <li><span>Statut</span><strong>Établissement public</strong></li>
-          <li><span>Rattachement</span><strong>Pôle de Sidi Abdellah</strong></li>
-          <li><span>Implantation</span><strong>Rahmania, Alger</strong></li>
-          <li><span>Directrice</span><strong>Mme Mouna Benkhalifa</strong></li>
+          <li><span data-i18n="card.status">Statut</span><strong data-i18n="card.statusV">Établissement public</strong></li>
+          <li><span data-i18n="card.attach">Rattachement</span><strong data-i18n="card.attachV">Pôle de Sidi Abdellah</strong></li>
+          <li><span data-i18n="card.loc">Implantation</span><strong data-i18n="card.locV">Rahmania, Alger</strong></li>
+          <li><span data-i18n="card.dir">Directrice</span><strong data-i18n="card.dirV">Mme Mouna Benkhalifa</strong></li>
         </ul>
 
         <div class="hero__chips">
-          <span>Data Science</span>
-          <span>Métaverse</span>
-          <span>Fibre optique</span>
-          <span>Maintenance IT</span>
-          <span>IA &amp; Télécoms</span>
-          <span>Cloud</span>
-          <span>Cybersécurité</span>
+          <span data-i18n="spec.data">Data Science</span>
+          <span data-i18n="spec.meta">Métaverse</span>
+          <span data-i18n="spec.fibre">Fibre optique</span>
+          <span data-i18n="spec.maint">Maintenance IT</span>
+          <span data-i18n="chip.ia">IA &amp; Télécoms</span>
+          <span data-i18n="chip.cloud">Cloud</span>
+          <span data-i18n="spec.cyber">Cybersécurité</span>
         </div>
       </aside>
     </div>
@@ -201,49 +207,49 @@
   <section class="section" id="institut">
     <div class="container institut">
       <div class="reveal">
-        <span class="eyebrow">L'institut</span>
-        <h2>Un établissement public au service des métiers du numérique</h2>
+        <span class="eyebrow" data-i18n="inst.eyebrow">L'institut</span>
+        <h2 data-i18n="inst.h2">Un établissement public au service des métiers du numérique</h2>
 
-        <p class="lead">
+        <p class="lead" data-i18n="inst.p1">
           L'INSFP Rahmania est un établissement public de formation professionnelle
           rattaché au <strong>pôle de Sidi Abdellah</strong>. Sa mission : offrir une
           formation qualifiante, pratique et diplômante, en phase avec les besoins
           réels du marché du travail.
         </p>
-        <p class="lead">
+        <p class="lead" data-i18n="inst.p2">
           Nos cursus sont dispensés par des formateurs spécialisés, dans des ateliers
           équipés : salles informatiques, laboratoire réseaux et fibre optique,
           plateformes cloud et cybersécurité.
         </p>
 
         <ul class="checklist">
-          <li><span class="tick"><svg><use href="#i-check"/></svg></span> Formations qualifiantes sanctionnées par un brevet d'État</li>
-          <li><span class="tick"><svg><use href="#i-check"/></svg></span> Encadrement assuré par des professionnels du secteur</li>
-          <li><span class="tick"><svg><use href="#i-check"/></svg></span> Ateliers pratiques, projets et stages en entreprise</li>
-          <li><span class="tick"><svg><use href="#i-check"/></svg></span> Accompagnement à l'insertion professionnelle des stagiaires</li>
+          <li><span class="tick"><svg><use href="#i-check"/></svg></span> <span data-i18n="inst.c1">Formations qualifiantes sanctionnées par un brevet d'État</span></li>
+          <li><span class="tick"><svg><use href="#i-check"/></svg></span> <span data-i18n="inst.c2">Encadrement assuré par des professionnels du secteur</span></li>
+          <li><span class="tick"><svg><use href="#i-check"/></svg></span> <span data-i18n="inst.c3">Ateliers pratiques, projets et stages en entreprise</span></li>
+          <li><span class="tick"><svg><use href="#i-check"/></svg></span> <span data-i18n="inst.c4">Accompagnement à l'insertion professionnelle des stagiaires</span></li>
         </ul>
       </div>
 
       <div class="institut__tiles reveal" style="--d:.1s">
         <article class="tile">
           <span class="tile__icon"><svg><use href="#i-cap"/></svg></span>
-          <strong>Établissement public</strong>
-          <span>Formation professionnelle de l'État</span>
+          <strong data-i18n="tile1.t">Établissement public</strong>
+          <span data-i18n="tile1.s">Formation professionnelle de l'État</span>
         </article>
         <article class="tile">
           <span class="tile__icon"><svg><use href="#i-pin"/></svg></span>
-          <strong>Pôle de Sidi Abdellah</strong>
-          <span>Rattachement administratif et pédagogique</span>
+          <strong data-i18n="tile2.t">Pôle de Sidi Abdellah</strong>
+          <span data-i18n="tile2.s">Rattachement administratif et pédagogique</span>
         </article>
         <article class="tile">
           <span class="tile__icon"><svg><use href="#i-layers"/></svg></span>
-          <strong>7 filières</strong>
-          <span>Toutes dédiées au numérique</span>
+          <strong data-i18n="tile3.t">7 filières</strong>
+          <span data-i18n="tile3.s">Toutes dédiées au numérique</span>
         </article>
         <article class="tile">
           <span class="tile__icon"><svg><use href="#i-award"/></svg></span>
-          <strong>Brevets d'État</strong>
-          <span>BTS et Brevet Professionnel</span>
+          <strong data-i18n="tile4.t">Brevets d'État</strong>
+          <span data-i18n="tile4.s">BTS et Brevet Professionnel</span>
         </article>
       </div>
     </div>
@@ -253,9 +259,9 @@
   <section class="section section--alt" id="formations">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="eyebrow">Nos cursus</span>
-        <h2>Sept filières, sept brevets</h2>
-        <p>
+        <span class="eyebrow" data-i18n="prog.eyebrow">Nos cursus</span>
+        <h2 data-i18n="prog.h2">Sept filières, sept brevets</h2>
+        <p data-i18n="prog.p">
           Chaque filière prépare à un brevet d'État. Cliquez sur une formation pour
           consulter la présentation complète du brevet : objectifs, compétences
           visées et débouchés professionnels.
@@ -269,14 +275,14 @@
             <span class="formation__icon"><svg><use href="#i-chart"/></svg></span>
             <span class="formation__badge">BTS</span>
           </div>
-          <h3>Data Science</h3>
-          <p>Collecter, nettoyer, analyser et valoriser les données pour éclairer les décisions.</p>
+          <h3 data-i18n="spec.data">Data Science</h3>
+          <p data-i18n="f1.p">Collecter, nettoyer, analyser et valoriser les données pour éclairer les décisions.</p>
           <ul class="formation__meta">
-            <li><svg><use href="#i-clock"/></svg> 30 mois</li>
-            <li><svg><use href="#i-award"/></svg> Brevet d'État</li>
+            <li><svg><use href="#i-clock"/></svg> <span data-i18n="f.months">30 mois</span></li>
+            <li><svg><use href="#i-award"/></svg> <span data-i18n="f.brevet">Brevet d'État</span></li>
           </ul>
           <button class="formation__btn" type="button" data-open="data-science">
-            Présentation du brevet <svg><use href="#i-arrow"/></svg>
+            <span data-i18n="f.btn">Présentation du brevet</span> <svg><use href="#i-arrow"/></svg>
           </button>
         </article>
 
@@ -286,14 +292,14 @@
             <span class="formation__icon"><svg><use href="#i-vr"/></svg></span>
             <span class="formation__badge">BTS</span>
           </div>
-          <h3>Métaverse</h3>
-          <p>Concevoir des environnements virtuels et des expériences immersives en 3D, AR et VR.</p>
+          <h3 data-i18n="spec.meta">Métaverse</h3>
+          <p data-i18n="f2.p">Concevoir des environnements virtuels et des expériences immersives en 3D, AR et VR.</p>
           <ul class="formation__meta">
-            <li><svg><use href="#i-clock"/></svg> 30 mois</li>
-            <li><svg><use href="#i-award"/></svg> Brevet d'État</li>
+            <li><svg><use href="#i-clock"/></svg> <span data-i18n="f.months">30 mois</span></li>
+            <li><svg><use href="#i-award"/></svg> <span data-i18n="f.brevet">Brevet d'État</span></li>
           </ul>
           <button class="formation__btn" type="button" data-open="metaverse">
-            Présentation du brevet <svg><use href="#i-arrow"/></svg>
+            <span data-i18n="f.btn">Présentation du brevet</span> <svg><use href="#i-arrow"/></svg>
           </button>
         </article>
 
@@ -303,14 +309,14 @@
             <span class="formation__icon"><svg><use href="#i-fibre"/></svg></span>
             <span class="formation__badge">BTS</span>
           </div>
-          <h3>Fibre optique</h3>
-          <p>Déployer, raccorder et maintenir les réseaux de fibre optique FTTH et FTTx.</p>
+          <h3 data-i18n="spec.fibre">Fibre optique</h3>
+          <p data-i18n="f3.p">Déployer, raccorder et maintenir les réseaux de fibre optique FTTH et FTTx.</p>
           <ul class="formation__meta">
-            <li><svg><use href="#i-clock"/></svg> 30 mois</li>
-            <li><svg><use href="#i-award"/></svg> Brevet d'État</li>
+            <li><svg><use href="#i-clock"/></svg> <span data-i18n="f.months">30 mois</span></li>
+            <li><svg><use href="#i-award"/></svg> <span data-i18n="f.brevet">Brevet d'État</span></li>
           </ul>
           <button class="formation__btn" type="button" data-open="fibre-optique">
-            Présentation du brevet <svg><use href="#i-arrow"/></svg>
+            <span data-i18n="f.btn">Présentation du brevet</span> <svg><use href="#i-arrow"/></svg>
           </button>
         </article>
 
@@ -320,14 +326,14 @@
             <span class="formation__icon"><svg><use href="#i-wrench"/></svg></span>
             <span class="formation__badge">BTS</span>
           </div>
-          <h3>Maintenance IT</h3>
-          <p>Installer, diagnostiquer et maintenir les équipements et le parc informatique.</p>
+          <h3 data-i18n="spec.maint">Maintenance IT</h3>
+          <p data-i18n="f4.p">Installer, diagnostiquer et maintenir les équipements et le parc informatique.</p>
           <ul class="formation__meta">
-            <li><svg><use href="#i-clock"/></svg> 30 mois</li>
-            <li><svg><use href="#i-award"/></svg> Brevet d'État</li>
+            <li><svg><use href="#i-clock"/></svg> <span data-i18n="f.months">30 mois</span></li>
+            <li><svg><use href="#i-award"/></svg> <span data-i18n="f.brevet">Brevet d'État</span></li>
           </ul>
           <button class="formation__btn" type="button" data-open="maintenance-it">
-            Présentation du brevet <svg><use href="#i-arrow"/></svg>
+            <span data-i18n="f.btn">Présentation du brevet</span> <svg><use href="#i-arrow"/></svg>
           </button>
         </article>
 
@@ -337,14 +343,14 @@
             <span class="formation__icon"><svg><use href="#i-antenna"/></svg></span>
             <span class="formation__badge">BTS</span>
           </div>
-          <h3>IA &amp; Télécommunications</h3>
-          <p>Déployer des solutions d'intelligence artificielle au service des réseaux télécoms.</p>
+          <h3 data-i18n="spec.ia">IA &amp; Télécommunications</h3>
+          <p data-i18n="f5.p">Déployer des solutions d'intelligence artificielle au service des réseaux télécoms.</p>
           <ul class="formation__meta">
-            <li><svg><use href="#i-clock"/></svg> 30 mois</li>
-            <li><svg><use href="#i-award"/></svg> Brevet d'État</li>
+            <li><svg><use href="#i-clock"/></svg> <span data-i18n="f.months">30 mois</span></li>
+            <li><svg><use href="#i-award"/></svg> <span data-i18n="f.brevet">Brevet d'État</span></li>
           </ul>
           <button class="formation__btn" type="button" data-open="ia-telecoms">
-            Présentation du brevet <svg><use href="#i-arrow"/></svg>
+            <span data-i18n="f.btn">Présentation du brevet</span> <svg><use href="#i-arrow"/></svg>
           </button>
         </article>
 
@@ -354,14 +360,14 @@
             <span class="formation__icon"><svg><use href="#i-cloud"/></svg></span>
             <span class="formation__badge">BTS</span>
           </div>
-          <h3>Cloud Computing</h3>
-          <p>Installer, administrer et sécuriser des infrastructures virtualisées et des services cloud.</p>
+          <h3 data-i18n="spec.cloud">Cloud Computing</h3>
+          <p data-i18n="f6.p">Installer, administrer et sécuriser des infrastructures virtualisées et des services cloud.</p>
           <ul class="formation__meta">
-            <li><svg><use href="#i-clock"/></svg> 30 mois</li>
-            <li><svg><use href="#i-award"/></svg> Brevet d'État</li>
+            <li><svg><use href="#i-clock"/></svg> <span data-i18n="f.months">30 mois</span></li>
+            <li><svg><use href="#i-award"/></svg> <span data-i18n="f.brevet">Brevet d'État</span></li>
           </ul>
           <button class="formation__btn" type="button" data-open="cloud-computing">
-            Présentation du brevet <svg><use href="#i-arrow"/></svg>
+            <span data-i18n="f.btn">Présentation du brevet</span> <svg><use href="#i-arrow"/></svg>
           </button>
         </article>
 
@@ -371,19 +377,19 @@
             <span class="formation__icon"><svg><use href="#i-shield"/></svg></span>
             <span class="formation__badge">BTS</span>
           </div>
-          <h3>Cybersécurité</h3>
-          <p>Prévenir, détecter et traiter les incidents de sécurité des systèmes d'information.</p>
+          <h3 data-i18n="spec.cyber">Cybersécurité</h3>
+          <p data-i18n="f7.p">Prévenir, détecter et traiter les incidents de sécurité des systèmes d'information.</p>
           <ul class="formation__meta">
-            <li><svg><use href="#i-clock"/></svg> 30 mois</li>
-            <li><svg><use href="#i-award"/></svg> Brevet d'État</li>
+            <li><svg><use href="#i-clock"/></svg> <span data-i18n="f.months">30 mois</span></li>
+            <li><svg><use href="#i-award"/></svg> <span data-i18n="f.brevet">Brevet d'État</span></li>
           </ul>
           <button class="formation__btn" type="button" data-open="cybersecurite">
-            Présentation du brevet <svg><use href="#i-arrow"/></svg>
+            <span data-i18n="f.btn">Présentation du brevet</span> <svg><use href="#i-arrow"/></svg>
           </button>
         </article>
       </div>
 
-      <p class="formations__legend">
+      <p class="formations__legend" data-i18n="prog.legend">
         <strong>BTS</strong> : Brevet de Technicien Supérieur · <strong>BP</strong> : Brevet Professionnel
       </p>
     </div>
@@ -393,9 +399,9 @@
   <section class="section" id="statistiques">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="eyebrow">Statistiques</span>
-        <h2>L'institut en chiffres</h2>
-        <p>
+        <span class="eyebrow" data-i18n="stat.eyebrow">Statistiques</span>
+        <h2 data-i18n="stat.h2">L'institut en chiffres</h2>
+        <p data-i18n="stat.p">
           Nombre de stagiaires inscrits dans chaque spécialité, ainsi que
           l'effectif total de l'INSFP Rahmania.
         </p>
@@ -411,10 +417,10 @@
   <section class="directrice" id="directrice">
     <div class="container">
       <div class="directrice__card reveal">
-        <div class="directrice__avatar" aria-hidden="true">MB</div>
+        <div class="directrice__avatar" aria-hidden="true" data-i18n="dir.avatar">MB</div>
         <div class="directrice__body">
-          <span class="eyebrow eyebrow--light">Mot de la directrice</span>
-          <blockquote>
+          <span class="eyebrow eyebrow--light" data-i18n="dir.eyebrow">Mot de la directrice</span>
+          <blockquote data-i18n="dir.quote">
             « Notre ambition est simple : donner à chaque stagiaire les compétences
             numériques qui lui ouvriront les portes de l'emploi. À l'INSFP Rahmania,
             nous formons des techniciens opérationnels, capables de s'adapter aux
@@ -422,8 +428,8 @@
             de notre pays. »
           </blockquote>
           <p class="directrice__name">
-            <strong>Mme Mouna Benkhalifa</strong>
-            <span>Directrice de l'INSFP Rahmania</span>
+            <strong data-i18n="dir.name">Mme Mouna Benkhalifa</strong>
+            <span data-i18n="dir.role">Directrice de l'INSFP Rahmania</span>
           </p>
         </div>
       </div>
@@ -434,9 +440,9 @@
   <section class="section" id="contact">
     <div class="container">
       <div class="sec-head reveal">
-        <span class="eyebrow">Contact</span>
-        <h2>Nous joindre</h2>
-        <p>
+        <span class="eyebrow" data-i18n="ct.eyebrow">Contact</span>
+        <h2 data-i18n="ct.h2">Nous joindre</h2>
+        <p data-i18n="ct.p">
           Une question sur une filière, une inscription ou un partenariat ?
           L'équipe de l'institut vous répond.
         </p>
@@ -445,20 +451,20 @@
       <div class="contact__grid">
         <article class="contact-card reveal">
           <span class="contact-card__icon"><svg><use href="#i-phone"/></svg></span>
-          <h3>Téléphone</h3>
+          <h3 data-i18n="ct.phone">Téléphone</h3>
           <a href="tel:+21320362112">020 36 21 12</a>
         </article>
 
         <article class="contact-card reveal" style="--d:.06s">
           <span class="contact-card__icon"><svg><use href="#i-mail"/></svg></span>
-          <h3>E-mail</h3>
+          <h3 data-i18n="ct.mail">E-mail</h3>
           <a href="mailto:insfp.rahmania@gmail.com">insfp.rahmania@gmail.com</a>
         </article>
 
         <article class="contact-card contact-card--fb reveal" style="--d:.12s">
           <span class="contact-card__icon"><svg><use href="#i-facebook"/></svg></span>
           <h3>Facebook</h3>
-          <a href="https://www.facebook.com/profile.php?id=100089009375724" target="_blank" rel="noopener noreferrer">
+          <a href="https://www.facebook.com/profile.php?id=100089009375724" target="_blank" rel="noopener noreferrer" data-i18n="ct.fbLink">
             Page officielle de l'INSFP
           </a>
         </article>
@@ -474,7 +480,7 @@
 
       <p class="contact__address reveal">
         <svg><use href="#i-pin"/></svg>
-        INSFP Rahmania — Pôle de Sidi Abdellah, Rahmania, Alger, Algérie
+        <span data-i18n="ct.addr">INSFP Rahmania — Pôle de Sidi Abdellah, Rahmania, Alger, Algérie</span>
       </p>
     </div>
   </section>
@@ -489,38 +495,38 @@
           <span class="brand__mark"><svg><use href="#i-cap"/></svg></span>
           <span class="brand__text">
             <strong>INSFP Rahmania</strong>
-            <small>Métiers du numérique</small>
+            <small data-i18n="brand.sub">Métiers du numérique</small>
           </span>
         </a>
-        <p>
+        <p data-i18n="ft.about">
           Établissement public de formation professionnelle rattaché au pôle de
           Sidi Abdellah. Formations qualifiantes aux métiers du numérique.
         </p>
       </div>
 
       <div>
-        <h4>Navigation</h4>
+        <h4 data-i18n="ft.nav">Navigation</h4>
         <ul>
-          <li><a href="#accueil">Accueil</a></li>
-          <li><a href="#institut">L'institut</a></li>
-          <li><a href="#formations">Formations</a></li>
-          <li><a href="#statistiques">Statistiques</a></li>
-          <li><a href="#directrice">La directrice</a></li>
+          <li><a href="#accueil" data-i18n="nav.home">Accueil</a></li>
+          <li><a href="#institut" data-i18n="nav.institute">L'institut</a></li>
+          <li><a href="#formations" data-i18n="nav.programs">Formations</a></li>
+          <li><a href="#statistiques" data-i18n="nav.stats">Statistiques</a></li>
+          <li><a href="#directrice" data-i18n="nav.director">La directrice</a></li>
         </ul>
       </div>
 
       <div>
-        <h4>Filières</h4>
+        <h4 data-i18n="ft.progs">Filières</h4>
         <ul>
-          <li><a href="#formations">Data Science</a></li>
-          <li><a href="#formations">Métaverse</a></li>
-          <li><a href="#formations">Cloud &amp; Cybersécurité</a></li>
-          <li><a href="#formations">Fibre optique</a></li>
+          <li><a href="#formations" data-i18n="spec.data">Data Science</a></li>
+          <li><a href="#formations" data-i18n="spec.meta">Métaverse</a></li>
+          <li><a href="#formations" data-i18n="ft.cc">Cloud &amp; Cybersécurité</a></li>
+          <li><a href="#formations" data-i18n="spec.fibre">Fibre optique</a></li>
         </ul>
       </div>
 
       <div>
-        <h4>Coordonnées</h4>
+        <h4 data-i18n="ft.coords">Coordonnées</h4>
         <ul>
           <li><a href="tel:+21320362112">020 36 21 12</a></li>
           <li><a href="mailto:insfp.rahmania@gmail.com">insfp.rahmania@gmail.com</a></li>
@@ -531,8 +537,8 @@
     </div>
 
     <div class="footer__bottom">
-      <span>© <span id="year">2026</span> INSFP Rahmania — Tous droits réservés.</span>
-      <span class="dev-credit">Conception &amp; développement : <strong>Mme Maouche Meriem</strong></span>
+      <span data-i18n="ft.rights">© <span id="year">2026</span> INSFP Rahmania — Tous droits réservés.</span>
+      <span class="dev-credit" data-i18n="ft.dev">Conception &amp; développement : <strong>Mme Maouche Meriem</strong></span>
     </div>
   </div>
 </footer>
@@ -542,11 +548,11 @@
   <div class="modal__backdrop" data-close></div>
 
   <div class="modal__panel" role="document">
-    <button class="modal__close" type="button" data-close aria-label="Fermer la fenêtre">
+    <button class="modal__close" type="button" data-close aria-label="Fermer la fenêtre" data-i18n-attr="aria-label:modal.close">
       <svg><use href="#i-close"/></svg>
     </button>
 
-    <span class="modal__eyebrow" id="modalBrevet">Brevet d'État</span>
+    <span class="modal__eyebrow" id="modalBrevet" data-i18n="modal.eyebrow">Brevet d'État</span>
     <h3 class="modal__title" id="modalTitle">Filière</h3>
 
     <div class="modal__meta" id="modalMeta"></div>
@@ -555,23 +561,23 @@
 
     <div class="modal__grid">
       <div class="modal__block">
-        <h4>Compétences visées</h4>
+        <h4 data-i18n="modal.comp">Compétences visées</h4>
         <ul class="modal__list modal__list--check" id="modalCompetences"></ul>
       </div>
       <div class="modal__block">
-        <h4>Débouchés professionnels</h4>
+        <h4 data-i18n="modal.deb">Débouchés professionnels</h4>
         <ul class="modal__list modal__list--arrow" id="modalDebouches"></ul>
       </div>
     </div>
 
     <a href="#contact" class="btn btn--primary modal__cta" data-close>
-      Demander une inscription <svg><use href="#i-arrow"/></svg>
+      <span data-i18n="modal.cta">Demander une inscription</span> <svg><use href="#i-arrow"/></svg>
     </a>
   </div>
 </div>
 
 <!-- ===================== RETOUR EN HAUT ===================== -->
-<button class="to-top" id="toTop" type="button" aria-label="Retour en haut de page">
+<button class="to-top" id="toTop" type="button" aria-label="Retour en haut de page" data-i18n-attr="aria-label:totop.aria">
   <svg><use href="#i-up"/></svg>
 </button>
 
@@ -582,32 +588,33 @@
     <svg class="chat__fab-close" aria-hidden="true"><use href="#i-close"/></svg>
   </button>
 
-  <section class="chat__panel" id="chatPanel" role="dialog" aria-label="Assistant INSFP Rahmania" hidden>
+  <section class="chat__panel" id="chatPanel" role="dialog" aria-label="Assistant INSFP Rahmania" data-i18n-attr="aria-label:chat.panel" hidden>
     <header class="chat__head">
       <span class="chat__avatar" aria-hidden="true"><svg><use href="#i-cap"/></svg></span>
       <div class="chat__title">
-        <strong>Assistant INSFP</strong>
-        <span><i class="pulse"></i> En ligne · répond avec le contenu du site</span>
+        <strong data-i18n="chat.title">Assistant INSFP</strong>
+        <span><i class="pulse"></i> <span data-i18n="chat.status">En ligne · répond avec le contenu du site</span></span>
       </div>
-      <button class="chat__x" id="chatClose" type="button" aria-label="Fermer l'assistant">
+      <button class="chat__x" id="chatClose" type="button" aria-label="Fermer l'assistant" data-i18n-attr="aria-label:chat.x">
         <svg aria-hidden="true"><use href="#i-close"/></svg>
       </button>
     </header>
 
     <div class="chat__log" id="chatLog" aria-live="polite"></div>
 
-    <div class="chat__chips" id="chatChips" aria-label="Questions suggérées"></div>
+    <div class="chat__chips" id="chatChips" aria-label="Questions suggérées" data-i18n-attr="aria-label:chat.chipsAria"></div>
 
     <form class="chat__form" id="chatForm" autocomplete="off">
       <input class="chat__input" id="chatInput" type="text" maxlength="200"
-             placeholder="Posez votre question…" aria-label="Votre question">
-      <button class="chat__send" type="submit" aria-label="Envoyer">
+             placeholder="Posez votre question…" aria-label="Votre question" data-i18n-attr="placeholder:chat.ph;aria-label:chat.inputAria">
+      <button class="chat__send" type="submit" aria-label="Envoyer" data-i18n-attr="aria-label:chat.send">
         <svg aria-hidden="true"><use href="#i-send"/></svg>
       </button>
     </form>
   </section>
 </div>
 
+<script src="i18n.js"></script>
 <script src="script.js"></script>
 </body>
 </html>

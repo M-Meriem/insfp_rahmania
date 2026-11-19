@@ -2037,6 +2037,157 @@ body.modal-open {
 /* ------------------------------------------------------------
    15. IMPRESSION
    ------------------------------------------------------------ */
+/* ------------------------------------------------------------
+   LANGUES — sélecteur FR / EN / AR
+   ------------------------------------------------------------ */
+.lang-switch {
+  display: inline-flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+.lang-switch button {
+  min-width: 38px;
+  padding: 0.36rem 0.7rem;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: rgba(255, 255, 255, 0.78);
+  cursor: pointer;
+  transition: background 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.lang-switch button:hover {
+  color: var(--white);
+}
+
+.lang-switch button[aria-pressed="true"] {
+  background: var(--grad-brand);
+  color: #04222e;
+}
+
+.lang-switch button:focus-visible {
+  outline: 2px solid var(--cyan-400);
+  outline-offset: 2px;
+}
+
+@media (max-width: 900px) {
+  .lang-switch {
+    margin-inline-start: auto;
+    margin-inline-end: 0.5rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .lang-switch button {
+    min-width: 30px;
+    padding: 0.3rem 0.5rem;
+  }
+}
+
+/* ------------------------------------------------------------
+   ARABE — police, pas de lettrage espacé (casse la liaison des lettres)
+   ------------------------------------------------------------ */
+html[lang="ar"] {
+  --font-head: 'Cairo', 'Sora', system-ui, -apple-system, sans-serif;
+  --font-body: 'Cairo', 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+html[lang="ar"] body {
+  line-height: 1.8;
+}
+
+html[lang="ar"] *,
+html[lang="ar"] *::before,
+html[lang="ar"] *::after {
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+html[lang="ar"] h1,
+html[lang="ar"] h2,
+html[lang="ar"] h3,
+html[lang="ar"] h4 {
+  line-height: 1.4;
+}
+
+/* ------------------------------------------------------------
+   DROITE → GAUCHE (arabe)
+   ------------------------------------------------------------ */
+[dir="rtl"] .hero__list strong { text-align: left; }
+[dir="rtl"] .formation__btn { text-align: right; }
+
+[dir="rtl"] .formation::after,
+[dir="rtl"] .stat__bar span { transform-origin: right; }
+
+/* Flèches et icône d'envoi : miroir */
+[dir="rtl"] .btn svg,
+[dir="rtl"] .formation__btn svg,
+[dir="rtl"] .chat__send svg { transform: scaleX(-1); }
+[dir="rtl"] .formation__btn:hover svg { transform: scaleX(-1) translateX(2px); }
+
+/* Citation de la directrice */
+[dir="rtl"] .directrice blockquote {
+  padding-left: 0;
+  border-left: 0;
+  padding-right: 1.4rem;
+  border-right: 3px solid var(--cyan-400);
+}
+
+/* Pied de page */
+[dir="rtl"] .site-footer ul a:hover { padding-left: 0; padding-right: 5px; }
+
+/* Fenêtre modale */
+[dir="rtl"] .modal__close { right: auto; left: 16px; }
+[dir="rtl"] .modal__title { padding-right: 0; padding-left: 40px; }
+[dir="rtl"] .modal__objectif {
+  border-left: 0;
+  border-right: 3px solid var(--cyan-400);
+}
+[dir="rtl"] .modal__list li { padding-left: 0; padding-right: 1.5rem; }
+[dir="rtl"] .modal__list--check li::before,
+[dir="rtl"] .modal__list--arrow li::before { left: auto; right: 0; }
+[dir="rtl"] .modal__list--check li::after { left: auto; right: 4px; }
+[dir="rtl"] .modal__list--arrow li::before { content: "←"; }
+
+/* Boutons flottants et assistant */
+[dir="rtl"] .to-top { right: auto; left: 33px; }
+[dir="rtl"] .chat { right: auto; left: 24px; }
+[dir="rtl"] .chat__fab { margin-left: 0; margin-right: auto; }
+[dir="rtl"] .chat__panel { right: auto; left: 0; }
+[dir="rtl"] .chat__msg--bot { border-bottom-left-radius: 16px; border-bottom-right-radius: 4px; }
+[dir="rtl"] .chat__msg--user { border-bottom-right-radius: 16px; border-bottom-left-radius: 4px; }
+[dir="rtl"] .chat__msg ul { padding-left: 0; padding-right: 1.1rem; }
+
+/* Téléphone, e-mail et @compte restent lisibles de gauche à droite */
+[dir="rtl"] a[href^="tel:"],
+[dir="rtl"] a[href^="mailto:"],
+[dir="rtl"] a[href*="instagram.com/insfp"] {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+}
+
+@media (max-width: 900px) {
+  [dir="rtl"] .directrice blockquote {
+    padding-right: 0;
+    border-right: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  [dir="rtl"] .to-top { right: auto; left: 22px; }
+  [dir="rtl"] .chat { right: auto; left: 16px; }
+  [dir="rtl"] .chat__panel { left: 12px; right: 12px; }
+}
+
 @media print {
   .site-header,
   .chat,

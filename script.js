@@ -17,6 +17,29 @@
   ).matches;
 
   /* ------------------------------------------------------------
+     1b. LANGUE (FR / EN / AR)
+     ------------------------------------------------------------ */
+  const I18N = window.I18N || {};
+  const LANGS = ["fr", "en", "ar"];
+  const LOCALES = { fr: "fr-FR", en: "en-US", ar: "ar-u-nu-latn" };
+  let LANG = "fr";
+  try {
+    const saved = localStorage.getItem("insfp-lang");
+    if (LANGS.indexOf(saved) !== -1) LANG = saved;
+  } catch (e) { /* stockage indisponible */ }
+  const urlLang = new URLSearchParams(window.location.search).get("lang");
+  if (LANGS.indexOf(urlLang) !== -1) LANG = urlLang;
+
+  const langHooks = [];                       // fonctions rappelées au changement de langue
+  const t = (key, vars) => {
+    let v = (I18N[LANG] && I18N[LANG][key]) || (I18N.fr && I18N.fr[key]) || key;
+    if (vars) Object.keys(vars).forEach((k) => { v = v.replace("{" + k + "}", vars[k]); });
+    return v;
+  };
+  const fmtNum = (n) => n.toLocaleString(LOCALES[LANG]);
+  const fmtSuffix = (sfx) => (LANG === "ar" ? sfx.trim() : sfx);
+
+  /* ------------------------------------------------------------
      2. DONNÉES DES BREVETS (7 filières)
      ------------------------------------------------------------ */
   const BREVETS = {
@@ -233,6 +256,22 @@
     }
   };
 
+  // Version localisée d'une fiche brevet (le français reste la source)
+  function brevet(key, lang) {
+    lang = lang || LANG;
+    const base = BREVETS[key];
+    const tr = lang !== "fr" && I18N.brevets && I18N.brevets[lang] && I18N.brevets[lang][key];
+    if (!base || !tr) return base;
+    return {
+      brevet: tr.brevet,
+      titre: tr.titre,
+      objectif: tr.objectif,
+      competences: tr.competences,
+      debouches: tr.debouches,
+      meta: base.meta.map((m, i) => ({ icone: m.icone, texte: tr.meta[i] }))
+    };
+  }
+
   /* ------------------------------------------------------------
      2b. STATISTIQUES (effectifs par spécialité + total institut)
      ------------------------------------------------------------
@@ -253,7 +292,13 @@
     ]
   };
 
-  function renderStats() {
+  const statName = (i, lang) => {
+    lang = lang || LANG;
+    return lang !== "fr" && I18N.statNames && I18N.statNames[lang]
+      ? I18N.statNames[lang][i] : STATS.specialites[i].nom;
+  };
+
+  function renderStats(instant) {
     const grid = $("#statsGrid");
     if (!grid) return;
 
@@ -262,30 +307,33 @@
 
     const svg = (id) =>
       '<svg aria-hidden="true"><use href="#' + id + '"></use></svg>';
-    const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    const esc = (x) => x.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+    const unit = t("stats.unit");
+    const show = (n) => (instant ? fmtNum(n) : "0");
+    const inCls = instant ? " is-in" : "";
 
     // Carte TOTAL INSTITUT
     let html =
-      '<article class="stat stat--total reveal">' +
+      '<article class="stat stat--total reveal' + inCls + '">' +
         '<span class="stat__icon">' + svg("i-users") + '</span>' +
-        '<h3>Total de l\'institut</h3>' +
-        '<strong class="stat__num" data-count="' + total + '">0</strong>' +
-        '<span class="stat__unit">' + STATS.unite + ' · ' + nb + ' spécialités</span>' +
+        '<h3>' + t("stats.total") + '</h3>' +
+        '<strong class="stat__num" data-count="' + total + '">' + show(total) + '</strong>' +
+        '<span class="stat__unit">' + unit + ' · ' + t("stats.specs", { n: nb }) + '</span>' +
       '</article>';
 
     // Cartes par spécialité
     STATS.specialites.forEach((sp, i) => {
       const pct = total ? Math.round((sp.nombre / total) * 100) : 0;
       html +=
-        '<article class="stat reveal" style="--d:' + ((i % 4) * 0.06).toFixed(2) + 's">' +
+        '<article class="stat reveal' + inCls + '" style="--d:' + ((i % 4) * 0.06).toFixed(2) + 's">' +
           '<span class="stat__icon">' + svg(sp.icone) + '</span>' +
-          '<h3>' + esc(sp.nom) + '</h3>' +
-          '<strong class="stat__num" data-count="' + sp.nombre + '">0</strong>' +
-          '<span class="stat__unit">' + STATS.unite + '</span>' +
-          '<div class="stat__bar" role="img" aria-label="' + pct + ' % de l\'effectif total">' +
+          '<h3>' + esc(statName(i)) + '</h3>' +
+          '<strong class="stat__num" data-count="' + sp.nombre + '">' + show(sp.nombre) + '</strong>' +
+          '<span class="stat__unit">' + unit + '</span>' +
+          '<div class="stat__bar" role="img" aria-label="' + t("stats.aria", { p: pct }) + '">' +
             '<span style="--w:' + pct + '%"></span>' +
           '</div>' +
-          '<span class="stat__pct">' + pct + ' % de l\'effectif</span>' +
+          '<span class="stat__pct">' + t("stats.pct", { p: pct }) + '</span>' +
         '</article>';
     });
 
@@ -293,6 +341,7 @@
   }
 
   renderStats();
+  langHooks.push(() => renderStats(true));
 
   /* ------------------------------------------------------------
      3. MENU MOBILE
@@ -305,7 +354,7 @@
     nav.classList.remove("is-open");
     burger.classList.remove("is-open");
     burger.setAttribute("aria-expanded", "false");
-    burger.setAttribute("aria-label", "Ouvrir le menu");
+    burger.setAttribute("aria-label", t("menu.open"));
   }
 
   function toggleMenu() {
@@ -315,12 +364,14 @@
     burger.setAttribute("aria-expanded", String(isOpen));
     burger.setAttribute(
       "aria-label",
-      isOpen ? "Fermer le menu" : "Ouvrir le menu"
+      isOpen ? t("menu.close") : t("menu.open")
     );
   }
 
   if (burger) {
     burger.addEventListener("click", toggleMenu);
+    langHooks.push(() =>
+      burger.setAttribute("aria-label", nav && nav.classList.contains("is-open") ? t("menu.close") : t("menu.open")));
   }
 
   if (nav) {
@@ -460,7 +511,6 @@
 
   function animateCounter(el) {
     const target = parseInt(el.dataset.count, 10) || 0;
-    const suffix = el.dataset.suffix || "";
     const duration = 1600;
     const start = performance.now();
 
@@ -468,8 +518,8 @@
       const progress = Math.min((now - start) / duration, 1);
       const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
       const value = Math.round(target * eased);
-      el.textContent = value.toLocaleString("fr-FR") + suffix;
-      if (progress < 1) requestAnimationFrame(tick);
+      el.textContent = fmtNum(value) + fmtSuffix(el.dataset.suffix || "");
+      if (progress < 1) { requestAnimationFrame(tick); } else { el.dataset.done = "1"; }
     }
 
     requestAnimationFrame(tick);
@@ -493,9 +543,18 @@
     counters.forEach((el) => {
       const target = parseInt(el.dataset.count, 10) || 0;
       const suffix = el.dataset.suffix || "";
-      el.textContent = target.toLocaleString("fr-FR") + suffix;
+      el.textContent = fmtNum(target) + fmtSuffix(suffix);
+      el.dataset.done = "1";
     });
   }
+  // Au changement de langue : reformater les compteurs déjà animés
+  langHooks.push(() => {
+    $$(".hero__stats [data-count]").forEach((el) => {
+      if (el.dataset.done) {
+        el.textContent = fmtNum(parseInt(el.dataset.count, 10) || 0) + fmtSuffix(el.dataset.suffix || "");
+      }
+    });
+  });
 
   /* ------------------------------------------------------------
      8. MODALE DES BREVETS
@@ -509,6 +568,7 @@
   const modalDebouches = $("#modalDebouches");
 
   let lastFocusedElement = null;
+  let currentModalKey = null;
 
   function buildMeta(metaList) {
     if (!modalMeta) return;
@@ -534,12 +594,9 @@
     });
   }
 
-  function openModal(key) {
-    const data = BREVETS[key];
-    if (!data || !modal) return;
-
-    lastFocusedElement = document.activeElement;
-
+  function fillModal(key) {
+    const data = brevet(key);
+    if (!data) return;
     if (modalBrevet)    modalBrevet.textContent    = data.brevet;
     if (modalTitle)     modalTitle.textContent     = data.titre;
     if (modalObjectif)  modalObjectif.textContent  = data.objectif;
@@ -547,6 +604,14 @@
     buildMeta(data.meta);
     buildList(modalCompet, data.competences);
     buildList(modalDebouches, data.debouches);
+  }
+
+  function openModal(key) {
+    if (!BREVETS[key] || !modal) return;
+
+    lastFocusedElement = document.activeElement;
+    currentModalKey = key;
+    fillModal(key);
 
     modal.hidden = false;
     document.body.classList.add("modal-open");
@@ -558,6 +623,10 @@
       setTimeout(() => closeBtn.focus(), 50);
     }
   }
+
+  langHooks.push(() => {
+    if (modal && !modal.hidden && currentModalKey) fillModal(currentModalKey);
+  });
 
   function closeModal() {
     if (!modal) return;
@@ -616,6 +685,7 @@
 
   /* ------------------------------------------------------------
      9b. ASSISTANT (CHATBOT) — répond à partir du contenu du site
+         Comprend le français, l'anglais et l'arabe.
      ------------------------------------------------------------ */
   (function initChatbot() {
     const root   = $("#chat");
@@ -628,6 +698,9 @@
     const btnX   = $("#chatClose");
     if (!root || !fab || !panel || !log || !form || !input) return;
 
+    const KW = (I18N && I18N.kw) || { alias: {} };
+    const chatStr = (lang) => (I18N.chat && (I18N.chat[lang] || I18N.chat.fr)) || {};
+
     /* ---------- Coordonnées ---------- */
     const CONTACT = {
       tel:  "020 36 21 12",
@@ -637,215 +710,189 @@
     };
 
     /* ---------- Outils de texte ---------- */
-    const norm = (s) =>
-      s.toLowerCase()
+    const hasArabic = (x) => /[\u0600-\u06FF]/.test(x);
+
+    // Minuscules, sans accents latins ni voyelles brèves arabes ;
+    // alef/ya/ta marbouta unifiés pour comparer des mots arabes.
+    const norm = (x) =>
+      x.toLowerCase()
         .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
-        .replace(/[^a-z0-9\s]/g, " ")
+        .replace(/[\u064B-\u065F\u0670\u0640]/g, "")
+        .replace(/[أإآٱ]/g, "ا").replace(/ى/g, "ي").replace(/ة/g, "ه")
+        .replace(/[^a-z0-9\u0621-\u064A\s]/g, " ")
         .replace(/\s+/g, " ")
         .trim();
+
+    // Jetons de la question + variantes sans article/préfixe arabe (ال، وال، بال…)
+    function tokenize(q) {
+      const out = [];
+      q.split(" ").filter(Boolean).forEach((tk) => {
+        out.push(tk);
+        const bare = tk.replace(/^(وال|بال|كال|فال|لل|ال)/, "");
+        if (bare !== tk && bare.length > 1) out.push(bare);
+      });
+      return out;
+    }
 
     // Un mot-clé correspond s'il est un mot (ou début de mot) de la question,
     // ou, s'il contient un espace, une expression présente dans la question.
     function has(q, tokens, kw) {
-      if (kw.indexOf(" ") !== -1) return q.indexOf(kw) !== -1;
-      return tokens.some((t) => t === kw || (kw.length >= 4 && t.indexOf(kw) === 0));
+      const k = norm(kw);
+      if (!k) return false;
+      if (k.indexOf(" ") !== -1) return q.indexOf(k) !== -1;
+      const minLen = hasArabic(k) ? 3 : 4;
+      return tokens.some((tk) => tk === k || (k.length >= minLen && tk.indexOf(k) === 0));
     }
-    const anyOf = (q, tokens, list) => list.some((kw) => has(q, tokens, kw));
-
-    /* ---------- Spécialités (alias de reconnaissance) ---------- */
-    const ALIAS = {
-      "data-science":    ["data science", "data", "donnees", "data analyst"],
-      "metaverse":       ["metaverse", "realite virtuelle", "realite augmentee", "vr", "3d", "xr"],
-      "fibre-optique":   ["fibre", "ftth", "ftx", "optique"],
-      "maintenance-it":  ["maintenance", "depannage", "support"],
-      "ia-telecoms":     ["ia", "intelligence artificielle", "telecom", "telecoms", "telecommunication"],
-      "cloud-computing": ["cloud", "virtualisation"],
-      "cybersecurite":   ["cyber", "cybersecurite", "securite", "soc"]
-    };
+    const anyOf = (q, tokens, list) => (list || []).some((kw) => has(q, tokens, kw));
 
     function detectSpec(q, tokens) {
-      const keys = Object.keys(ALIAS);
+      const keys = Object.keys(KW.alias);
       for (let i = 0; i < keys.length; i++) {
-        if (anyOf(q, tokens, ALIAS[keys[i]])) return keys[i];
+        if (anyOf(q, tokens, KW.alias[keys[i]])) return keys[i];
       }
       return null;
     }
 
+    const brevetKeys = () => Object.keys(BREVETS);
     const metaOf = (b, icone) => {
       const m = b.meta.find((x) => x.icone === icone);
       return m ? m.texte.trim() : "";
     };
+    const li = (arr) => "<ul>" + arr.map((x) => "<li>" + x + "</li>").join("") + "</ul>";
+    const openBtn = (C, key) =>
+      '<button type="button" class="chat__link" data-chat-open="' + key + '">' + C.fiche + "</button>";
 
-    const li = (arr) =>
-      "<ul>" + arr.map((x) => "<li>" + x + "</li>").join("") + "</ul>";
+    const statIdx = (k) => brevetKeys().indexOf(k);
+    const totalStagiaires = () => STATS.specialites.reduce((x, y) => x + y.nombre, 0);
+    const unitOf = (L) => (L === "fr" ? STATS.unite : ((I18N[L] && I18N[L]["stats.unit"]) || STATS.unite));
 
-    const openBtn = (key) =>
-      '<button type="button" class="chat__link" data-chat-open="' + key + '">' +
-      "Voir la fiche complète du brevet</button>";
-
-    const statFor = (titre) => {
-      const key = norm(titre);
-      return STATS.specialites.find((s) => norm(s.nom) === key ||
-        norm(s.nom).indexOf(key.split(" ")[0]) === 0);
-    };
-    const totalStagiaires = () =>
-      STATS.specialites.reduce((s, x) => s + x.nombre, 0);
-
-    /* ---------- Réponses ---------- */
+    /* ---------- Réponses (C = textes de la langue, L = langue) ---------- */
     const A = {
-      accueil: () =>
-        "Bonjour ! Je suis l'assistant de l'<strong>INSFP Rahmania</strong>. " +
-        "Je peux vous renseigner sur les filières, les débouchés, les effectifs, " +
-        "l'inscription et nos coordonnées. Que souhaitez-vous savoir ?",
+      accueil: (C) => C.hello,
+      institut: (C) => C.institut,
 
-      institut: () =>
-        "L'<strong>INSFP Rahmania</strong> est un établissement public de formation " +
-        "professionnelle rattaché au <strong>pôle de Sidi Abdellah</strong> (Rahmania, Alger). " +
-        "Il forme des techniciens aux métiers du numérique, avec des ateliers pratiques, " +
-        "des projets et des stages en entreprise. " +
-        '<a href="#institut">Découvrir l\'institut</a>',
+      filieres: (C, L) =>
+        C.filieres(li(brevetKeys().map((k) => brevet(k, L).titre))),
 
-      filieres: () =>
-        "Nous proposons <strong>7 filières</strong> du numérique :" +
-        li(Object.keys(BREVETS).map((k) => BREVETS[k].titre)) +
-        "Dites-moi laquelle vous intéresse pour en savoir plus. " +
-        '<a href="#formations">Voir les formations</a>',
-
-      specGeneral: (k) => {
-        const b = BREVETS[k];
-        return "<strong>" + b.titre + "</strong> — " + b.brevet.replace("Brevet de Technicien Supérieur — ", "") +
-          " · " + metaOf(b, "i-clock") + ".<br>" + b.objectif +
-          "<br><br>Demandez-moi aussi les <em>débouchés</em> ou les <em>compétences</em> de cette filière.<br>" +
-          openBtn(k);
+      specGeneral: (C, L, k) => {
+        const b = brevet(k, L);
+        const code = b.brevet.split("—").pop().trim();
+        return "<strong>" + b.titre + "</strong> — " + code + " · " + metaOf(b, "i-clock") + ".<br>" +
+          b.objectif + "<br><br>" + C.more + "<br>" + openBtn(C, k);
       },
-      specDebouches: (k) => {
-        const b = BREVETS[k];
-        return "Débouchés en <strong>" + b.titre + "</strong> :" + li(b.debouches) + openBtn(k);
+      specDebouches: (C, L, k) => {
+        const b = brevet(k, L);
+        return C.deb(b.titre) + li(b.debouches) + openBtn(C, k);
       },
-      specCompetences: (k) => {
-        const b = BREVETS[k];
-        return "Compétences visées en <strong>" + b.titre + "</strong> :" + li(b.competences) + openBtn(k);
+      specCompetences: (C, L, k) => {
+        const b = brevet(k, L);
+        return C.comp(b.titre) + li(b.competences) + openBtn(C, k);
       },
-      specDuree: (k) => {
-        const b = BREVETS[k];
-        return "La filière <strong>" + b.titre + "</strong> dure <strong>" + metaOf(b, "i-clock") +
-          "</strong> (niveau d'accès : " + metaOf(b, "i-cap") + ").";
+      specDuree: (C, L, k) => {
+        const b = brevet(k, L);
+        return C.duree1(b.titre, metaOf(b, "i-clock"), metaOf(b, "i-cap"));
       },
-      specStat: (k) => {
-        const b = BREVETS[k];
-        const s = statFor(b.titre);
-        if (!s) return A.stats();
-        return "<strong>" + b.titre + "</strong> compte <strong>" + s.nombre + " " + STATS.unite +
-          "</strong>, sur un total de " + totalStagiaires() + " pour l'institut. " +
-          '<a href="#statistiques">Voir les statistiques</a>';
+      specStat: (C, L, k) => {
+        const b = brevet(k, L);
+        const s = STATS.specialites[statIdx(k)];
+        if (!s) return A.stats(C, L);
+        return C.stat1(b.titre, s.nombre, totalStagiaires(), unitOf(L));
       },
 
-      stats: () =>
-        "L'institut compte <strong>" + totalStagiaires() + " " + STATS.unite + "</strong> au total :" +
-        li(STATS.specialites.map((s) => s.nom + " : <strong>" + s.nombre + "</strong>")) +
-        '<a href="#statistiques">Voir la section statistiques</a>',
+      stats: (C, L) =>
+        C.statsAll(totalStagiaires(), unitOf(L)) +
+        li(STATS.specialites.map((s, i) => statName(i, L) + " : <strong>" + s.nombre + "</strong>")) +
+        '<a href="#statistiques">' + C.linkStats + "</a>",
 
-      duree: () =>
-        "La durée dépend de la filière :" +
-        li(Object.keys(BREVETS).map((k) => BREVETS[k].titre + " : " + metaOf(BREVETS[k], "i-clock"))),
+      duree: (C, L) =>
+        C.dureeAll + li(brevetKeys().map((k) => brevet(k, L).titre + " : " + metaOf(brevet(k, L), "i-clock"))),
 
-      debouches: () =>
-        "Les débouchés dépendent de la filière (technicien supérieur, analyste, installateur, " +
-        "administrateur…), avec possibilité de poursuivre en licence professionnelle. " +
-        "Indiquez-moi une filière pour voir ses débouchés précis.",
+      debouches: (C) => C.debGen,
+      diplome: (C) => C.diplome,
 
-      diplome: () =>
-        "Chaque filière prépare à un <strong>brevet d'État</strong> : le " +
-        "<strong>BTS</strong> (Brevet de Technicien Supérieur) ou le " +
-        "<strong>BP</strong> (Brevet Professionnel). " +
-        '<a href="#formations">Voir les formations</a>',
+      inscription: (C) =>
+        C.inscription + "<br>📞 " +
+        '<a href="tel:+21320362112" dir="ltr">' + CONTACT.tel + "</a><br>✉️ " +
+        '<a href="mailto:' + CONTACT.mail + '" dir="ltr">' + CONTACT.mail + "</a>",
 
-      inscription: () =>
-        "Pour vous inscrire ou connaître les conditions d'admission et les dates, " +
-        "contactez directement l'institut : <br>📞 " +
-        '<a href="tel:+21320362112">' + CONTACT.tel + "</a><br>✉️ " +
-        '<a href="mailto:' + CONTACT.mail + '">' + CONTACT.mail + "</a>",
+      directrice: (C) => C.directrice,
 
-      directrice: () =>
-        "L'institut est dirigé par <strong>Mme Mouna Benkhalifa</strong>, directrice de l'INSFP Rahmania. " +
-        '<a href="#directrice">Lire son mot</a>',
+      contact: (C) =>
+        C.contactIntro + "<br>" +
+        '📞 <a href="tel:+21320362112" dir="ltr">' + CONTACT.tel + "</a><br>" +
+        '✉️ <a href="mailto:' + CONTACT.mail + '" dir="ltr">' + CONTACT.mail + "</a><br>" +
+        '👍 <a href="' + CONTACT.fb + '" target="_blank" rel="noopener noreferrer">Facebook</a> · ' +
+        '📷 <a href="' + CONTACT.ig + '" target="_blank" rel="noopener noreferrer">Instagram</a>',
 
-      contact: () =>
-        "Vous pouvez nous joindre ainsi :<br>" +
-        "📞 <a href=\"tel:+21320362112\">" + CONTACT.tel + "</a><br>" +
-        "✉️ <a href=\"mailto:" + CONTACT.mail + "\">" + CONTACT.mail + "</a><br>" +
-        "👍 <a href=\"" + CONTACT.fb + "\" target=\"_blank\" rel=\"noopener noreferrer\">Facebook</a> · " +
-        "📷 <a href=\"" + CONTACT.ig + "\" target=\"_blank\" rel=\"noopener noreferrer\">Instagram</a>",
-
-      adresse: () =>
-        "📍 INSFP Rahmania — Pôle de Sidi Abdellah, Rahmania, Alger, Algérie. " +
-        '<a href="#contact">Voir la section contact</a>',
-
-      merci: () => "Avec plaisir ! N'hésitez pas si vous avez d'autres questions. 😊",
-      aurevoir: () => "Au revoir et à bientôt à l'INSFP Rahmania !",
-
-      inconnu: () =>
-        "Je n'ai pas trouvé de réponse précise à cette question dans le contenu du site. " +
-        "Je peux vous parler des <em>filières</em>, des <em>débouchés</em>, des <em>effectifs</em>, " +
-        "de l'<em>inscription</em> ou du <em>contact</em>. Pour toute autre demande, " +
-        'appelez-nous au <a href="tel:+21320362112">' + CONTACT.tel + "</a> ou écrivez à " +
-        '<a href="mailto:' + CONTACT.mail + '">' + CONTACT.mail + "</a>."
+      adresse: (C) => C.adresse,
+      merci: (C) => C.merci,
+      aurevoir: (C) => C.bye,
+      inconnu: (C) => C.unknown(CONTACT.tel, CONTACT.mail)
     };
 
     /* ---------- Moteur de réponse ---------- */
+    // Retourne { html, lang } : on répond en arabe si la question est écrite en arabe,
+    // sinon dans la langue actuellement affichée sur le site.
     function reply(raw) {
+      const L = hasArabic(raw) ? "ar" : LANG;
+      const C = chatStr(L);
       const q = norm(raw);
-      const tokens = q.split(" ").filter(Boolean);
-      if (!tokens.length) return A.inconnu();
+      const tokens = tokenize(q);
+      const out = (html) => ({ html: html, lang: L });
+      if (!tokens.length) return out(A.inconnu(C));
 
-      const isStat    = anyOf(q, tokens, ["stagiaire", "effectif", "statistique", "chiffre", "inscrit", "combien", "total", "nombre", "etudiant"]);
-      const isDuree   = anyOf(q, tokens, ["mois", "duree", "longtemps", "annee", "combien de temps"]);
-      const isDeb     = anyOf(q, tokens, ["debouche", "metier", "emploi", "travail", "poste", "carriere", "salaire", "embauche"]);
-      const isComp    = anyOf(q, tokens, ["competence", "apprend", "programme", "contenu", "module", "matiere", "objectif"]);
+      const is = (list) => anyOf(q, tokens, list);
+      const longQ  = is(KW.longQ);
+      const isStat  = !longQ && is(KW.stat);
+      const isDuree = longQ || is(KW.duree);
+      const isDeb   = is(KW.deb);
+      const isComp  = is(KW.comp);
 
       // 1. Politesse
-      if (anyOf(q, tokens, ["merci", "thanks", "parfait", "super"]) && tokens.length <= 4) return A.merci();
-      if (anyOf(q, tokens, ["au revoir", "bye", "salut a bientot", "a bientot"])) return A.aurevoir();
-      if (anyOf(q, tokens, ["bonjour", "salut", "bonsoir", "hello", "salam", "coucou"]) && tokens.length <= 3) return A.accueil();
+      if (is(KW.merci) && tokens.length <= 4) return out(A.merci(C));
+      if (is(KW.bye)) return out(A.aurevoir(C));
+      if (is(KW.hello) && tokens.length <= 3) return out(A.accueil(C));
 
       // 2. Question sur une spécialité précise
       const spec = detectSpec(q, tokens);
       if (spec) {
-        if (isDuree) return A.specDuree(spec);
-        if (isDeb)   return A.specDebouches(spec);
-        if (isComp)  return A.specCompetences(spec);
-        if (isStat)  return A.specStat(spec);
-        return A.specGeneral(spec);
+        if (isDuree) return out(A.specDuree(C, L, spec));
+        if (isDeb)   return out(A.specDebouches(C, L, spec));
+        if (isComp)  return out(A.specCompetences(C, L, spec));
+        if (isStat)  return out(A.specStat(C, L, spec));
+        return out(A.specGeneral(C, L, spec));
       }
 
       // 3. Sujets généraux
-      if (anyOf(q, tokens, ["inscri", "admission", "candidature", "postuler", "dossier", "condition", "rejoindre", "comment integrer"])) return A.inscription();
-      if (anyOf(q, tokens, ["directrice", "directeur", "responsable", "dirige", "benkhalifa", "mouna"])) return A.directrice();
-      if (anyOf(q, tokens, ["adresse", "ou se trouve", "ou etes vous", "ou est", "ou etes", "localisation", "situe", "lieu", "plan", "alger", "sidi abdellah", "venir"]) ) return A.adresse();
-      if (anyOf(q, tokens, ["contact", "telephone", "tel", "appeler", "numero", "mail", "email", "facebook", "instagram", "reseaux", "joindre"])) return A.contact();
-      if (isStat)  return A.stats();
-      if (isDuree) return A.duree();
-      if (isDeb)   return A.debouches();
-      if (anyOf(q, tokens, ["diplome", "brevet", "bts", "certificat", "attestation", "titre"])) return A.diplome();
-      if (anyOf(q, tokens, ["filiere", "formation", "specialite", "cursus", "domaine", "propose", "offre", "enseigne"])) return A.filieres();
-      if (anyOf(q, tokens, ["institut", "insfp", "ecole", "etablissement", "qui etes vous", "presentation", "propos", "public", "pole"])) return A.institut();
-      if (anyOf(q, tokens, ["aide", "aider", "quoi", "que peux tu", "que pouvez vous"])) return A.accueil();
+      if (is(KW.inscr))      return out(A.inscription(C));
+      if (is(KW.directrice)) return out(A.directrice(C));
+      if (is(KW.adresse))    return out(A.adresse(C));
+      if (is(KW.contact))    return out(A.contact(C));
+      if (isStat)            return out(A.stats(C, L));
+      if (isDuree)           return out(A.duree(C, L));
+      if (isDeb)             return out(A.debouches(C));
+      if (is(KW.diplome))    return out(A.diplome(C));
+      if (is(KW.filieres))   return out(A.filieres(C, L));
+      if (is(KW.institut))   return out(A.institut(C));
+      if (is(KW.aide))       return out(A.accueil(C));
 
-      return A.inconnu();
+      return out(A.inconnu(C));
     }
 
     /* ---------- Interface ---------- */
-    function addMsg(html, who, isHTML) {
+    function addMsg(html, who, isHTML, lang) {
       const div = document.createElement("div");
       div.className = "chat__msg chat__msg--" + who;
+      if (lang) div.dir = lang === "ar" ? "rtl" : "ltr";
+      else if (who === "user") div.dir = "auto";
       if (isHTML) div.innerHTML = html; else div.textContent = html;
       log.appendChild(div);
       log.scrollTop = log.scrollHeight;
       return div;
     }
 
-    function botSay(html) {
-      const typing = addMsg("<span class=\"chat__dots\"><i></i><i></i><i></i></span>", "bot", true);
+    function botSay(html, lang) {
+      const typing = addMsg('<span class="chat__dots"><i></i><i></i><i></i></span>', "bot", true, lang);
       setTimeout(() => {
         typing.innerHTML = html;
         log.scrollTop = log.scrollHeight;
@@ -853,44 +900,46 @@
     }
 
     function ask(text) {
-      const t = text.trim();
-      if (!t) return;
-      addMsg(t, "user", false);
-      botSay(reply(t));
+      const v = text.trim();
+      if (!v) return;
+      addMsg(v, "user", false);
+      const r = reply(v);
+      botSay(r.html, r.lang);
     }
 
-    const SUGGESTIONS = [
-      "Quelles filières ?",
-      "Combien de stagiaires ?",
-      "Comment s'inscrire ?",
-      "Quels débouchés ?",
-      "Contact",
-      "Où êtes-vous ?"
-    ];
-    SUGGESTIONS.forEach((s) => {
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "chat__chip";
-      b.textContent = s;
-      b.addEventListener("click", () => ask(s));
-      chips.appendChild(b);
-    });
+    function buildChips() {
+      chips.innerHTML = "";
+      (chatStr(LANG).chips || []).forEach((label) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "chat__chip";
+        b.textContent = label;
+        b.addEventListener("click", () => ask(label));
+        chips.appendChild(b);
+      });
+    }
+    buildChips();
 
     let greeted = false;
+    const fabLabel = () => fab.setAttribute("aria-label", panel.hidden ? t("chat.open") : t("chat.closeLbl"));
+
     function openChat() {
       panel.hidden = false;
       root.classList.add("is-open");
       fab.setAttribute("aria-expanded", "true");
-      fab.setAttribute("aria-label", "Fermer l'assistant");
-      if (!greeted) { greeted = true; addMsg(A.accueil(), "bot", true); }
+      fabLabel();
+      if (!greeted) { greeted = true; addMsg(A.accueil(chatStr(LANG)), "bot", true, LANG); }
       setTimeout(() => input.focus(), 60);
     }
     function closeChat() {
       panel.hidden = true;
       root.classList.remove("is-open");
       fab.setAttribute("aria-expanded", "false");
-      fab.setAttribute("aria-label", "Ouvrir l'assistant");
+      fabLabel();
     }
+
+    // Changement de langue : suggestions + libellé du bouton
+    langHooks.push(() => { buildChips(); fabLabel(); });
 
     fab.addEventListener("click", () => (panel.hidden ? openChat() : closeChat()));
     if (btnX) btnX.addEventListener("click", () => { closeChat(); fab.focus(); });
@@ -921,6 +970,69 @@
   /* ------------------------------------------------------------
      10. INITIALISATION
      ------------------------------------------------------------ */
+  /* ------------------------------------------------------------
+     11. GESTION DE LA LANGUE (FR / EN / AR)
+     ------------------------------------------------------------ */
+  const frText  = new WeakMap();   // élément -> texte français d'origine
+  const frAttrs = new WeakMap();   // élément -> { attribut: valeur française }
+  const frMeta = {
+    title: document.title,
+    desc: (document.querySelector('meta[name="description"]') || {}).content || ""
+  };
+
+  $$("[data-i18n]").forEach((el) => frText.set(el, el.innerHTML.replace(/\s+/g, " ").trim()));
+  $$("[data-i18n-attr]").forEach((el) => {
+    const map = {};
+    el.getAttribute("data-i18n-attr").split(";").forEach((pair) => {
+      const attr = pair.split(":")[0];
+      map[attr] = el.getAttribute(attr);
+    });
+    frAttrs.set(el, map);
+  });
+
+  function applyLanguage(lang, persist) {
+    if (LANGS.indexOf(lang) === -1) lang = "fr";
+    LANG = lang;
+    const dict = I18N[lang] || {};
+    const root = document.documentElement;
+    root.lang = lang;
+    root.dir = lang === "ar" ? "rtl" : "ltr";
+
+    $$("[data-i18n]").forEach((el) => {
+      const v = lang !== "fr" && dict[el.getAttribute("data-i18n")];
+      el.innerHTML = v || frText.get(el);
+    });
+
+    $$("[data-i18n-attr]").forEach((el) => {
+      el.getAttribute("data-i18n-attr").split(";").forEach((pair) => {
+        const parts = pair.split(":");
+        const v = lang !== "fr" && dict[parts[1]];
+        el.setAttribute(parts[0], v || frAttrs.get(el)[parts[0]]);
+      });
+    });
+
+    document.title = (lang !== "fr" && dict["meta.title"]) || frMeta.title;
+    const metaDesc = document.querySelector('meta[name="description"]');
+    if (metaDesc) metaDesc.content = (lang !== "fr" && dict["meta.desc"]) || frMeta.desc;
+
+    $$(".lang-switch [data-lang]").forEach((b) =>
+      b.setAttribute("aria-pressed", String(b.dataset.lang === lang)));
+
+    const y = $("#year");
+    if (y) y.textContent = new Date().getFullYear();
+
+    langHooks.forEach((fn) => fn());
+
+    if (persist) {
+      try { localStorage.setItem("insfp-lang", lang); } catch (e) { /* ignoré */ }
+    }
+    setActiveLink();
+  }
+
+  $$(".lang-switch [data-lang]").forEach((b) =>
+    b.addEventListener("click", () => applyLanguage(b.dataset.lang, true)));
+
+  if (LANG !== "fr") applyLanguage(LANG, false);
   onScroll();
   setActiveLink();
 })();
