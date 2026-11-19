@@ -840,6 +840,130 @@ svg:not(.sprite) {
 }
 
 /* ------------------------------------------------------------
+   7b. STATISTIQUES
+   ------------------------------------------------------------ */
+.stats__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  padding: 24px 22px;
+  border-radius: var(--radius);
+  background: var(--white);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease),
+              border-color 0.3s var(--ease);
+}
+
+.stat:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow);
+  border-color: rgba(34, 211, 238, 0.35);
+}
+
+.stat__icon {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 13px;
+  background: linear-gradient(135deg, rgba(34, 211, 238, 0.16), rgba(45, 212, 191, 0.16));
+  color: var(--cyan-500);
+  margin-bottom: 1rem;
+}
+
+.stat__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.stat h3 {
+  font-size: 0.98rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.stat__num {
+  font-family: var(--font-head);
+  font-size: 2.3rem;
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--ink-900);
+}
+
+.stat__unit {
+  font-size: 0.84rem;
+  color: var(--ink-500);
+  margin-bottom: 1.1rem;
+}
+
+.stat__bar {
+  height: 6px;
+  border-radius: 6px;
+  background: var(--line-soft);
+  overflow: hidden;
+  margin-top: auto;
+}
+
+.stat__bar span {
+  display: block;
+  height: 100%;
+  width: var(--w, 0%);
+  border-radius: 6px;
+  background: var(--grad-brand);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.2s var(--ease) 0.25s;
+}
+
+.stat.is-in .stat__bar span {
+  transform: scaleX(1);
+}
+
+.stat__pct {
+  margin-top: 0.5rem;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--ink-400);
+}
+
+/* Carte total institut */
+.stat--total {
+  background:
+    radial-gradient(260px 160px at 90% 0%, rgba(45, 212, 191, 0.28), transparent 70%),
+    var(--grad-hero);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: var(--shadow-lg);
+}
+
+.stat--total .stat__icon {
+  background: var(--grad-brand);
+  color: #04222e;
+  box-shadow: var(--shadow-glow);
+}
+
+.stat--total h3 {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+.stat--total .stat__num {
+  font-size: 3.2rem;
+  color: var(--white);
+}
+
+.stat--total .stat__unit {
+  color: var(--cyan-400);
+  font-weight: 600;
+  margin-bottom: 0;
+}
+
+/* ------------------------------------------------------------
    8. SECTION DIRECTRICE
    ------------------------------------------------------------ */
 .directrice {
@@ -1419,6 +1543,10 @@ body.modal-open {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .stats__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
   .contact__grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -1519,6 +1647,10 @@ body.modal-open {
     grid-template-columns: 1fr;
   }
 
+  .stats__grid {
+    grid-template-columns: 1fr;
+  }
+
   .contact__grid {
     grid-template-columns: 1fr;
   }
@@ -1603,6 +1735,7 @@ body.modal-open {
 
   .formation,
   .contact-card,
+  .stat,
   .tile {
     box-shadow: none !important;
     border: 1px solid #ccc !important;

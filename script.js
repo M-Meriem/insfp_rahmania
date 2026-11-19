@@ -234,6 +234,67 @@
   };
 
   /* ------------------------------------------------------------
+     2b. STATISTIQUES (effectifs par spécialité + total institut)
+     ------------------------------------------------------------
+     ➜ Modifiez UNIQUEMENT les nombres ci-dessous : le total de
+       l'institut, les pourcentages et les barres sont calculés
+       automatiquement.
+     ------------------------------------------------------------ */
+  const STATS = {
+    unite: "stagiaires",
+    specialites: [
+      { nom: "Data Science",            icone: "i-chart",   nombre: 45 },
+      { nom: "Métaverse",               icone: "i-vr",      nombre: 32 },
+      { nom: "Fibre optique",           icone: "i-fibre",   nombre: 38 },
+      { nom: "Maintenance IT",          icone: "i-wrench",  nombre: 52 },
+      { nom: "IA & Télécommunications", icone: "i-antenna", nombre: 28 },
+      { nom: "Cloud Computing",         icone: "i-cloud",   nombre: 41 },
+      { nom: "Cybersécurité",           icone: "i-shield",  nombre: 47 }
+    ]
+  };
+
+  function renderStats() {
+    const grid = $("#statsGrid");
+    if (!grid) return;
+
+    const total = STATS.specialites.reduce((s, x) => s + x.nombre, 0);
+    const nb    = STATS.specialites.length;
+
+    const svg = (id) =>
+      '<svg aria-hidden="true"><use href="#' + id + '"></use></svg>';
+    const esc = (t) => t.replace(/&/g, "&amp;").replace(/</g, "&lt;");
+
+    // Carte TOTAL INSTITUT
+    let html =
+      '<article class="stat stat--total reveal">' +
+        '<span class="stat__icon">' + svg("i-users") + '</span>' +
+        '<h3>Total de l\'institut</h3>' +
+        '<strong class="stat__num" data-count="' + total + '">0</strong>' +
+        '<span class="stat__unit">' + STATS.unite + ' · ' + nb + ' spécialités</span>' +
+      '</article>';
+
+    // Cartes par spécialité
+    STATS.specialites.forEach((sp, i) => {
+      const pct = total ? Math.round((sp.nombre / total) * 100) : 0;
+      html +=
+        '<article class="stat reveal" style="--d:' + ((i % 4) * 0.06).toFixed(2) + 's">' +
+          '<span class="stat__icon">' + svg(sp.icone) + '</span>' +
+          '<h3>' + esc(sp.nom) + '</h3>' +
+          '<strong class="stat__num" data-count="' + sp.nombre + '">0</strong>' +
+          '<span class="stat__unit">' + STATS.unite + '</span>' +
+          '<div class="stat__bar" role="img" aria-label="' + pct + ' % de l\'effectif total">' +
+            '<span style="--w:' + pct + '%"></span>' +
+          '</div>' +
+          '<span class="stat__pct">' + pct + ' % de l\'effectif</span>' +
+        '</article>';
+    });
+
+    grid.innerHTML = html;
+  }
+
+  renderStats();
+
+  /* ------------------------------------------------------------
      3. MENU MOBILE
      ------------------------------------------------------------ */
   const burger = $("#burger");
